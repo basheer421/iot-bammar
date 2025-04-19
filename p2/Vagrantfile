@@ -24,7 +24,6 @@ Vagrant.configure("2") do |config|
       sudo apt install iptables -y
       sudo iptables -F
       curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface=eth1 --node-ip=192.168.56.110 --bind-address=192.168.56.110"  sh -
-      curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
       sudo kubectl apply -f /confs/conf.yml
     SCRIPT
 
