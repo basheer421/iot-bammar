@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app1
-  lables:
+  labels:
     app: app1
 spec:
   replicas: 1
@@ -24,7 +24,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app2
-  lables:
+  labels:
     app: app2
 spec:
   replicas: 3
@@ -46,7 +46,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app3
-  lables:
+  labels:
     app: app3
 spec:
   replicas: 1
@@ -126,8 +126,7 @@ spec:
             name: app2
             port:
               number: 80
-  - host:
-    http:
+  - http:
       paths:
       - path: /
         pathType: Prefix
