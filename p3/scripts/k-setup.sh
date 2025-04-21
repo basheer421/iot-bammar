@@ -1,5 +1,7 @@
 #!/bin/bash
 
+k3d cluster create mycluster
+
 kubectl create namespace dev
 kubectl create namespace argocd
 
