@@ -11,3 +11,5 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 # To not use -n dev everytime - set default namespace context
 kubectl config set-context --current --namespace=dev
 
+kubectl apply -f ../confs/conf.yml
+
