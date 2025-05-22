@@ -18,9 +18,14 @@ fi
 # Install k3d
 #curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
+# argocd 
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm argocd-linux-amd64
+
 # Reboot for docker rootless
-echo "Rebooting for docker rootless mode"
-sleep 2
+#echo "Rebooting for docker rootless mode"
+# sleep 2
 
 read -p "Do you want to reboot now? (y/n): " answer
 
