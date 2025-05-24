@@ -74,6 +74,8 @@ argocd app create iot \
   --dest-server https://kubernetes.default.svc \
   --dest-namespace dev
 
+argocd app set iot --sync-policy automated --self-heal --allow-empty
+
 echo Syncing the app with argocd...
 argocd app sync iot
 
