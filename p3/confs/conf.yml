@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: playground
-        image: wil42/playground:v2
+        image: wil42/playground:v1
         ports:
         - containerPort: 8888
 ---
@@ -31,3 +31,21 @@ spec:
     - protocol: TCP
       port: 8888
       targetPort: 8888
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app1
+            port:
+              number: 8888
