@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: argocd-app-refresh
+spec:
+  containers:
+  - name: refresher
+    image: argoproj/argocd:v2.11.0
+    command: ["/bin/sh", "-c"]
+    args:
+      - |
+        argocd login argocd-server.argocd.svc.cluster.local --username admin --password $ARGOCD_PASSWORD --insecure;
+        while true; do
+          echo "Refreshing app iot at \$(date)";
+          argocd app refresh iot;
+          sleep 10;
+        done
+    env:
+    - name: ARGOCD_PASSWORD
+      value: "$ARGOCD_PASSWORD"
+  restartPolicy: Always
