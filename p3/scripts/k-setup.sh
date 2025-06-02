@@ -67,6 +67,15 @@ kubectl wait deployment argocd-server -n argocd --for=condition=Available=True -
 echo Loging in to argocd
 argocd login localhost:30080 --username admin --password "$ARGOCD_PASSWORD" --insecure
 
+echo 'Patching Argo CD controller to enable periodic Git polling...'
+kubectl patch deployment argocd-application-controller -n argocd \
+  --type json \
+  -p '[
+    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--status-refresh-time=10s"},
+    {"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--repo-server-refresh-timeout=10s"}
+  ]'
+kubectl rollout restart deployment argocd-application-controller -n argocd
+
 echo 'Creating argocd app from (https://github.com/basheer421/iot-bammar.git)...'
 argocd app create iot \
   --repo https://github.com/basheer421/iot-bammar.git \
