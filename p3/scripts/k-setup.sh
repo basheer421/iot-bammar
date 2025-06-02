@@ -76,14 +76,15 @@ argocd app create iot \
 
 argocd app set iot --sync-policy automated --self-heal --allow-empty
 
-echo Syncing the app with argocd...
-argocd app sync iot
-
 echo Waiting for app to become synced and healthy...
 argocd app wait iot --sync --health --timeout 60
 
-echo Applying pod to watch changes every 10 seconds
-kubectl apply -n argocd -f ../confs/refresher.yml
+echo Applying a pod to watch changes every 10 seconds
+export ARGOCD_PASSWORD
+export ARGOCD_VERSION=$(kubectl get deployment argocd-server -n argocd -o jsonpath='{.spec.template.spec.containers[0].image}' | cut -d':' -f2)
+# envsubst < ../confs/refresher.yml  | cat
+envsubst < ../confs/refresher.yml | kubectl apply -n argocd -f -
+# envsubst is used to replace env vars in the refresher.yml file
 
 echo Your login:
 echo ---------------
