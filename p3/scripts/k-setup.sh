@@ -3,14 +3,14 @@ set -e
 
 # set -e to make the script fail early
 
-if k3d cluster get mycluster >/dev/null 2>&1; then
-    echo "Cluster 'mycluster' exists. Recreating..."
-    k3d cluster delete mycluster
+if k3d cluster get p3cluster >/dev/null 2>&1; then
+    echo "Cluster 'p3cluster' exists. Recreating..."
+    k3d cluster delete p3cluster
 else
-    echo "Cluster 'mycluster' does not exist. Creating..."
+    echo "Cluster 'p3cluster' does not exist. Creating..."
 fi
 
-k3d cluster create mycluster --port 30080:30080@loadbalancer --port 8888:80@loadbalancer
+k3d cluster create p3cluster --port 30080:30080@loadbalancer --port 8888:80@loadbalancer
 
 kubectl create namespace dev
 kubectl create namespace argocd
@@ -70,20 +70,20 @@ argocd login localhost:30080 --username admin --password "$ARGOCD_PASSWORD" --in
 echo 'Creating argocd app from (https://github.com/basheer421/iot-bammar.git)...'
 argocd app create iot \
   --repo https://github.com/basheer421/iot-bammar.git \
-  --path p3/confs \
+  --path p3/confs/synced \
   --dest-server https://kubernetes.default.svc \
   --dest-namespace dev
 
 argocd app set iot --sync-policy automated --self-heal --allow-empty
 
 echo Waiting for app to become synced and healthy...
-argocd app wait iot --sync --health --timeout 60
+argocd app wait iot --sync --health --timeout 180
 
-echo Applying a pod to watch changes every 10 seconds
-export ARGOCD_PASSWORD
-export ARGOCD_VERSION=$(kubectl get deployment argocd-server -n argocd -o jsonpath='{.spec.template.spec.containers[0].image}' | cut -d':' -f2)
-# envsubst < ../confs/refresher.yml  | cat
-envsubst < ../confs/refresher.yml | kubectl apply -n argocd -f -
+# echo Applying a pod to watch changes every 10 seconds
+# export ARGOCD_PASSWORD
+# export ARGOCD_VERSION=$(kubectl get deployment argocd-server -n argocd -o jsonpath='{.spec.template.spec.containers[0].image}' | cut -d':' -f2)
+# # envsubst < ../confs/refresher.yml  | cat
+# envsubst < ../confs/refresher.yml | kubectl apply -n argocd -f -
 # envsubst is used to replace env vars in the refresher.yml file
 
 echo Your login:
