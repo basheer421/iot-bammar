@@ -59,7 +59,7 @@ until kubectl get endpoints ingress-nginx-controller-admission -n ingress-nginx 
 done
 
 echo Applyig Dev project
-kubectl apply -f ../confs/conf.yml
+kubectl apply -f ../confs/synced/conf.yml
 
 echo Ensuring argocd is ready for logging in...
 kubectl wait deployment argocd-server -n argocd --for=condition=Available=True --timeout=60s
@@ -79,11 +79,9 @@ argocd app set iot --sync-policy automated --self-heal --allow-empty
 echo Waiting for app to become synced and healthy...
 argocd app wait iot --sync --health --timeout 180
 
-# echo Applying a pod to watch changes every 10 seconds
-# export ARGOCD_PASSWORD
-# export ARGOCD_VERSION=$(kubectl get deployment argocd-server -n argocd -o jsonpath='{.spec.template.spec.containers[0].image}' | cut -d':' -f2)
-# # envsubst < ../confs/refresher.yml  | cat
-# envsubst < ../confs/refresher.yml | kubectl apply -n argocd -f -
+echo Applying a pod to watch changes every 10 seconds
+export ARGOCD_PASSWORD
+envsubst < ../confs/refresher.yml | kubectl apply -n argocd -f -
 # envsubst is used to replace env vars in the refresher.yml file
 
 echo Your login:
