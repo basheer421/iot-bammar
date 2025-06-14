@@ -12,7 +12,7 @@ spec:
         argocd login argocd-server.argocd.svc.cluster.local --username admin --password $ARGOCD_PASSWORD --insecure;
         while true; do
           echo "Refreshing app iot at \$(date)";
-          argocd app sync iot;
+          argocd app sync iot > /dev/null;
           sleep 10;
         done
     env:
