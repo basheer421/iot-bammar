@@ -72,7 +72,6 @@ spec:
   selector:
     app: app1
   ports:
-    - protocol: TCP
       port: 80
       targetPort: 8080
 ---
@@ -84,7 +83,6 @@ spec:
   selector:
     app: app2
   ports:
-    - protocol: TCP
       port: 80
       targetPort: 8080
 ---
@@ -96,7 +94,6 @@ spec:
   selector:
     app: app3
   ports:
-    - protocol: TCP
       port: 80
       targetPort: 8080
 ---

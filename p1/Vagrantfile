@@ -1,49 +1,28 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-    config.vm.box = "generic/debian12"
-    config.vm.box_architecture = "amd64"
-    config.vm.box_version = "4.3.12"
-
-    # SSH
-    config.ssh.insert_key = true
-    config.vm.synced_folder "./confs", "/confs"
-
-    
-    config.vm.define "bammarS" do |server|
-      server.vm.hostname = "bammarS"
-      server.vm.network "private_network", ip: "192.168.56.110"
-      
-      # Reason: https://docs.k3s.io/installation/requirements#hardware
-      server.vm.provider "virtualbox" do |vb|
-        vb.memory = "2048"
-        vb.cpus = 2
-      end
-
-      server.vm.provision "shell", inline: <<-SCRIPT
-        sudo apt install iptables -y
-        sudo iptables -F
-        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface=eth1 --node-ip=192.168.56.110 --bind-address=192.168.56.110"  sh - 
-        sudo cat /var/lib/rancher/k3s/server/node-token > /confs/node-token
-      SCRIPT
-    end
-    
-    config.vm.define "bammarSW" do |worker|
-      worker.vm.hostname = "bammarSW"
-      worker.vm.network "private_network", ip: "192.168.56.111"
-      worker.vm.provider "virtualbox" do |vb|
-        vb.memory = "512"
-        vb.cpus = 1
-      end
-      worker.vm.provision "shell", inline: <<-SCRIPT
-        sudo apt install iptables -y
-        sudo iptables -F
-        while [ ! -f /confs/node-token ]; do
-          echo "Waiting for node-token..."
-          sleep 2
-        done
-        curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent --server https://192.168.56.110:6443 --node-ip=192.168.56.111 --bind-address=192.168.56.111 --flannel-iface=eth1" K3S_TOKEN=$(cat /confs/node-token) K3S_URL=https://192.168.56.110:6443 sh -
-      SCRIPT
-    end
+	config.vm.box = "debian/bookworm64"
+  
+	config.vm.define "mradwanS" do |server|
+	  server.vm.hostname = "mradwanS"
+	  server.vm.network "private_network", ip: "192.168.56.110"
+	  server.vm.provider "virtualbox" do |v|
+		v.memory = 1024
+		v.cpus = 1
+		v.name = "mradwanS"
+	  end
+	  server.vm.provision "shell", path: "scripts/provision_server.sh"
+	end
+  
+	config.vm.define "mradwanSW" do |worker|
+	  worker.vm.hostname = "mradwanSW"
+	  worker.vm.network "private_network", ip: "192.168.56.111"
+	  worker.vm.provider "virtualbox" do |v|
+		v.memory = 1024
+		v.cpus = 1
+		v.name = "mradwanSW"
+	  end
+	  worker.vm.provision "shell", path: "scripts/provision_worker.sh"
+	end
+  
   end
+  
