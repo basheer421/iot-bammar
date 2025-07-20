@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt update
+sudo apt install -y curl
 sudo mkdir -p /vagrant/confs
 sudo touch /vagrant/confs/server_token.txt
 
