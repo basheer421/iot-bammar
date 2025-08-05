@@ -11,8 +11,8 @@ Vagrant.configure("2") do |config|
     config.vm.synced_folder "./confs", "/confs"
 
     
-    config.vm.define "bammarS" do |server|
-      server.vm.hostname = "bammarS"
+    config.vm.define "mradwanS" do |server|
+      server.vm.hostname = "mradwanS"
       server.vm.network "private_network", ip: "192.168.56.110"
       
       # Reason: https://docs.k3s.io/installation/requirements#hardware
@@ -29,8 +29,8 @@ Vagrant.configure("2") do |config|
       SCRIPT
     end
     
-    config.vm.define "bammarSW" do |worker|
-      worker.vm.hostname = "bammarSW"
+    config.vm.define "mradwanSW" do |worker|
+      worker.vm.hostname = "mradwanSW"
       worker.vm.network "private_network", ip: "192.168.56.111"
       worker.vm.provider "virtualbox" do |vb|
         vb.memory = "512"
